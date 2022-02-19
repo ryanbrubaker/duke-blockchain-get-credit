@@ -205,10 +205,21 @@ contract YourContract
    }
 
 
-   function getCreditScore () public returns(int)
+   function getCreditScore() public returns(int)
    {
-      int scoreForCurrentContract = _scoreCurrentContract(msg.sender);
-      int retValue = scoreForCurrentContract + creditScores[msg.sender];
+      return _getCreditScore(msg.sender);      
+   }
+
+   function getCreditScore(address borrower) public returns(int)
+   {
+      return _getCreditScore(borrower);
+   } 
+
+
+   function _getCreditScore(address borrower) private returns(int)
+   {
+      int scoreForCurrentContract = _scoreCurrentContract(borrower);
+      int retValue = scoreForCurrentContract + creditScores[borrower];
       if (retValue >= 0)
       {
          _lastMessage = string(abi.encodePacked(
@@ -226,12 +237,12 @@ contract YourContract
    }
 
 
-   function _scoreCurrentContract(address sender) private view returns(int)
+   function _scoreCurrentContract(address borrower) private view returns(int)
    {
       int scoreForCurrentContract = 0;
-      if (loans[sender].hasLoan)
+      if (loans[borrower].hasLoan)
       {
-         Loan memory aLoan = loans[sender];
+         Loan memory aLoan = loans[borrower];
          // First score payments made
          for (uint i = 0; i < aLoan.numPaymentsMade; ++i)
          {
